@@ -1,0 +1,116 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/r/bs-3.3.5/jq-2.1.4,dt-1.10.8/datatables.min.css"/>
+
+    <script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-1.12.4.js">
+    </script>
+    <script type="text/javascript" language="javascript"
+            src="http://cdn.datatables.net/1.10.0-beta.2/js/jquery.dataTables.js">
+    </script>
+    <script type="text/javascript" language="javascript"
+            src="http://cdn.datatables.net/plug-ins/505bef35b56/integration/bootstrap/3/dataTables.bootstrap.js">
+    </script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            $('#example').DataTable({
+                "scrollX": false
+            });
+        });
+    </script>
+    <title>{% block head_title %}{% endblock %}</title>
+    <style>
+        hr {
+            display: block;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            margin-left: auto;
+            margin-right: auto;
+            border-style: inset;
+            border-width: 1px;
+        }
+
+        .col-xs-4 {
+            padding-left: 2px !important;
+        }
+
+        .table-responsive {
+            overflow-x: initial;
+        }
+
+        .alert-error {
+            color: #b94a48;
+            background-color: #f2dede;
+            border-color: #eed3d7;
+        }
+
+
+    </style>
+    {% block script %}{% endblock %}
+    <script>
+        function getParameterByName(name, url) {
+            if (!url) {
+                url = window.location.href;
+            }
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+
+        }
+        $(document).ready(function () {
+            var foo = getParameterByName('foo'); // "lorem"
+            if (foo == "company") {
+                $("#company").addClass("active");
+            } else if (foo == "home") {
+                $("#home").addClass("active");
+            } else if (foo == "products") {
+                $("#products").addClass("active");
+            } else if (foo == "invoice") {
+                $("#invoice").addClass("active")
+            } else if (foo !== "home") {
+                $("#home").addClass("active");
+            }else if (foo !== "stock") {
+                $("#stock").addClass("active");
+            }
+        });</script>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">BS Enterprises</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li id="home"><a href="/inventory/?foo=home">Home</a></li>
+            <li id="company"><a href="/inventory/company/?foo=company">Company</a></li>
+            <li id="products"><a href="/inventory/products/?foo=products">Products</a></li>
+            <li id="invoice"><a href="/inventory/invoice/?foo=invoice">Invoice Maker</a></li>
+            <li id="stock"><a href="/inventory/stock/?foo=stock">Stock</a></li>
+            <li id="stock"><a href="/inventory/invoice_list/?foo=stock">Invoice List</a></li>
+        </ul>
+
+    </div>
+</nav>
+
+<div class="container">
+    {% include "Inventory/messages.html" %}
+
+    {% block content %}
+    {% endblock content %}
+</div>
+</body>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+</html>
+

@@ -1,0 +1,192 @@
+{% extends "Inventory/base.html" %}
+{% block head_title %}
+    Invoice Maker
+{% endblock %}
+{% block script %}
+    <script>
+
+        function delete_row(e) {
+            e.parentNode.parentNode.removeChild(e.parentNode);
+        }
+        function qty_change(e, totalid, priceid) {
+            var price = document.getElementById(priceid).value;
+            console.log(price);
+            $("#" + totalid).val(e.value * price)
+        }
+        function productChange(e, priceid,MRPID) {
+            $.ajax({
+                headers: {'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()},
+                type: 'GET',
+                url: 'product_get/' + e.value,
+
+                dataType: 'json',
+                success: function (response) {
+                    if (response.avail) {
+                        $("#" + priceid).val(response.price);
+                        $("#" + MRPID).val(response.price);
+                    } else {
+
+                    }
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            $("#add_add_btn").hide();
+
+            $i = 1;
+
+            $("#add").click(function () {
+                $("#remove_add_btn").hide();
+                $("#add_add_btn").show();
+                $dt = $("#form_append");
+                if ($i == 1) {
+                    $dt.append("<br/><br/><br/><br/><br/><br/>");
+                }
+                $dt.append("<br><hr><div id='mulitiple_form" + $i + "' style=display:block>" +
+
+
+                        "<div class='form-group'>" +
+                        "<div class='col-xs-4'>" +
+
+                        "<label for='company'>Product :</label>" +
+                        "<select class='form-control' id='product' onchange=productChange(this,'price" + $i + "','MRP" + $i + "') class='product' name='product'>" +
+                        "<option value=0 >Select</option>" +
+                        "{% for product in products %}"+
+                            "<option name='company{{ product.code }}' id='company{{ product.code }}'"+
+                            "value='{{ product.code }}'>{{ product.name }}({{ product.code }})"+
+                            "</option>"+
+                            "{% endfor %}" +
+                        "</select>" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='form-group'>" +
+                        "<div class='col-xs-4'>" +
+                        "<label for='ex3'>MRP:</label>" +
+                        "<input class='form-control' id='MRP" + $i + "' name='MRP' type='text' >" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='form-group'>" +
+                        "<div class='col-xs-4'>" +
+                        "<label for='ex3'>Price:</label>" +
+                        "<input class='form-control' id='price" + $i + "' name='price' type='text' >" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='form-group'>" +
+                        "<div class='col-xs-4'>" +
+                        "<label for='ex3'>Qty:</label>" +
+                        "<input class='form-control' id='Qty" + $i + "' name='Qty' onchange=qty_change(this,'total" + $i + "','price" + $i + "') type='text'>" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='form-group'>" +
+                        "<div class='col-xs-4'>" +
+                        "<label for='ex3'>Total:</label>" +
+                        "<input class='form-control' id='total" + $i + "' name='total' type='text' >" +
+                        "</div>" +
+                        "</div><br/><br/><br/><br/>" +
+
+                        "<button type='button' class='btn btn-info' id='remove' onClick='delete_row(this)'>" +
+                        "<span class='glyphicon glyphicon-minus'></span>" +
+                        "</button></div>");
+                $i++;
+
+            });
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div style="padding-left: 30%">
+        <div class="col-sm-8">
+            <h2>Invoice Maker</h2>
+
+            <form action="/inventory/invoice/" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Customer Name :</label>
+                    <input type="text" class="form-control" id="cust_name" name="cust_name" value="">
+                </div>
+                <div class="form-group">
+                    <label for="email">Customer Address :</label>
+                    <input type="text" class="form-control" id="cust_add" name="cust_add" value="">
+                </div>
+                <div class="form-group">
+                    <label for="company">Status :</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="UN">Unpaid</option>
+                        <option value="P">Paid</option>
+                    </select>
+                </div>
+
+                <div id="form_append" style="display:block ">
+                    <hr>
+                    <div id="mulitiple_form">
+                        <div class="form-group">
+                            <div class="col-xs-4">
+                                <label for="company">Product :</label>
+                                <select class="form-control" id="product" onload="productChange(this,'price')"
+                                        onchange="productChange(this,'price','MRP')" class="product"
+                                        name="product">
+                                    <option value="0">Select</option>
+
+                                    {% for product in products %}
+                                        <option name="company{{ product.code }}" id="company{{ product.code }}"
+                                                value="{{ product.code }}"
+                                                {% if forloop.couter == 0 %}selected="selected"{% endif %}>{{ product.name }}({{ product.code }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-4">
+                                <label for="ex3">MRP:</label>
+                                <input class="form-control" name="MRP" id="MRP" type="text" value=""
+                                       multiple="multiple">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-4">
+                                <label for="ex3">Rate:</label>
+                                <input class="form-control" name="price" id="price" type="text" value=""
+                                       multiple="multiple">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-4">
+                                <label for="ex3">Qty:</label>
+                                <input class="form-control" onchange="qty_change(this,'total','price')" name="Qty"
+                                       id="Qty" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-4">
+                                <label for="ex3">Total:</label>
+                                <input class="form-control" name="total" id="total" type="text">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div id="add_btn">
+                    <div id="add_add_btn"><br/></div>
+
+                    <div id="remove_add_btn"><br/><br/><br/><br/></div>
+                    <button type="button" class="btn btn-info" id="add">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+                <br/><br/>
+
+
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

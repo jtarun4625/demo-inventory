@@ -1,0 +1,59 @@
+{% extends "Inventory/base.html" %}
+{% block head_title %}
+    Company(Detail)
+{% endblock %}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock script %}
+{% block content %}
+    <div style="padding-left: 30%">
+        <div class="col-sm-6">
+            <h2>Update Purchase</h2>
+
+            <form action="/inventory/{{ pk }}/" method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="email">Company Code :</label>
+                    <input type="text" class="form-control" id="company" name="company"
+                           value="{{ company_name }}({{ company }})" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Name :</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ name }}({{ code }})"
+                           disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Stock Available :</label>
+                    <input type="text" class="form-control" id="stock" name="stock" value="{{ stock }}">
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Product Price :</label>
+                    <input type="text" class="form-control" id="price" name="price" value="{{ price }}">
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Purchase Price :</label>
+                    <input type="text" class="form-control" id="purchase_price" name="purchase_price"
+                           value="{{ purchase_price }}">
+                </div>
+
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="sel1">Unit :{{ unit }}</label>
+                        <select class="form-control" id="unit" name="unit">
+                            <option id="unit" {% if unit == "units" %}selected="selected"{% endif %}>Units</option>
+                            <option id="kg" {% if unit == "Kg" %}selected="selected"{% endif %}>Kg</option>
+                            <option id="gm" {% if unit == "Gm" %}selected="selected"{% endif %}>Gm</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

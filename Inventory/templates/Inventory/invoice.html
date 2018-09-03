@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        @media print {
+            @page {
+                margin: 1cm;
+            }
+
+            body {
+                margin: 1.6cm;
+            }
+        }
+    </style>
+    <script>
+        var jsonObject = JSON.parse('{{ invoice_json | escapejs }}');
+        var invoice_id = jsonObject.invoice_id;
+
+
+    </script>
+    <script
+            src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="invoice-title">
+                <h2>Bhagya Shree Enterprises</h2>
+
+                <h3 class="pull-right">Order #
+                    <script>document.write(invoice_id)</script>
+                </h3>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-xs-6">
+                    <address>
+                        <strong>Billed To:</strong><br>
+                        {{ cust_name }}<br>
+                        {{ cust_add }}<br>
+
+                    </address>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <address>
+                        <strong>Shipped To:</strong><br>
+                        {{ cust_name }}<br>
+                        {{ cust_add }}<br>
+                    </address>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <address>
+
+                    </address>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <address>
+                        <strong>Invoice Date:</strong><br>
+                        {{ date }}<br><br>
+                    </address>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Order summary</strong></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <td><strong>Item</strong></td>
+                                <td class="text-center"><strong>MRP</strong></td>
+                                <td class="text-center"><strong>Rate</strong></td>
+                                <td class="text-center"><strong>Quantity</strong></td>
+                                <td class="text-right"><strong>Totals</strong></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- foreach ($order->lineItems as $line) or some such thing here -->
+
+
+                            <script>
+                                var total = 0
+                                for (var i = 0; i < jsonObject.qty.length; i++) {
+
+                                    document.write(
+                                            "<tr>" +
+                                            "<td>" + jsonObject.prod_name[i] + "</td>" +
+                                            "<td class='text-center'>" + jsonObject.rate[i] + "</td>" +
+                                            "<td class='text-center'>" + jsonObject.stocks[i] + "</td>" +
+                                            "<td class='text-center'>" + jsonObject.qty[i] + "</td>" +
+                                            "<td class='text-right'>" + (Number(jsonObject.stocks[i])) * (Number(jsonObject.qty[i])) + "</td>" +
+                                            "</tr>");
+                                    total = total + (Number(jsonObject.stocks[i])) * (Number(jsonObject.qty[i]));
+                                }
+                            </script>
+                            <tr>
+                                <td class="no-line"></td>
+                                <td class="no-line"></td>
+                                <td class="no-line"></td>
+                                <td class="no-line text-center"><strong>Total</strong></td>
+                                <td class="no-line text-right">
+                                    <script>document.write(total)</script>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

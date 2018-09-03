@@ -1,0 +1,36 @@
+{% extends "Inventory/base.html" %}
+{% block head_title %}
+    Company(Detail)
+{% endblock %}
+{% block content %}
+    <div style="padding-left: 30%">
+        <div class="col-sm-6">
+            <h2>Add Product</h2>
+
+            <form action="/inventory/products/add/" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Product Code :</label>
+                    <input type="text" class="form-control" id="code" name="code">
+                </div>
+                <div class="form-group">
+                    <label for="sel1">Company :</label>
+                    <select class="form-control" id="company" name="company">
+                        {% for companies in company %}
+                            <option name="company{{ companies.code }}" id="company{{ companies.code }}"  value="{{ companies.code }}">{{ companies.name }}({{ companies.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Name :</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ name }}">
+                </div>
+
+
+
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

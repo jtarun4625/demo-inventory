@@ -1,0 +1,74 @@
+{% extends "Inventory/base.html" %}
+{% block script %}
+    <script>
+
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+        function getstock(product_id, i) {
+
+            // 1. Instantiate XHR - Start
+
+            $.ajax({
+                headers: {'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()},
+                type: 'GET',
+                url: 'stock/' + product_id,
+
+                dataType: 'json',
+                success: function (response) {
+                    if (response.avail) {
+                        console.log(response.stock)
+                        $("#stock" + i).text(response.stock + " " + response.units);
+                        $("#price" + i).text("Rs. " + response.price + " / " + response.units)
+                    }else{
+                        $("#stock" + i).text("Purchase Not Available");
+                        $("#price" + i).text("Purchase Not Available")
+                    }
+                }
+            });
+            // 3. Specify your action, location and Send to the server - End
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+    <h2 style="padding-left:40%;">Product List</h2>
+    <a href="add/?foo=products" class="btn btn-primary" style="float: right">Add</a>
+    <br/>
+    <br/>
+    <br/>
+    <div class="table-responsive">
+        <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Stock(Left)</th>
+                <th>Price</th>
+                <th>Action</th>
+
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for products in product %}
+                <tr>
+                    <td>{{ products.code }}</td>
+                    <td>{{ products.name }}</td>
+                    <td><a href="{% url 'Inventory:CompDetailView' products.company_id %}">{{ products.company }}</a>
+                    </td>
+                    <td id="stock{{ forloop.counter }}">
+                        <script>getstock({{ products.code }}, {{ forloop.counter }})</script>
+                    </td>
+                    <td id="price{{ forloop.counter }}"></td>
+                    <td><a href="{{ products.code }}/?foo=products">Update</a>&nbsp<a
+                            href="{{ products.code }}/delete/?foo=products">Delete</a></td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
