@@ -9,7 +9,7 @@ class Company(models.Model):
         return self.name
 
 class Product(models.Model):
-    company = models.ForeignKey(Company)
+    company = models.ForeignKey(Company,on_delete=models.CASCADE,)
     code = models.CharField(primary_key=True, max_length=10)
     name = models.CharField(max_length=250)
 
